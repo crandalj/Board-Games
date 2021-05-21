@@ -5,13 +5,18 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public GameObject gamePiece;
-    public Tile[,] tiles;
+    public GameObject tilePiece;
+    public GameObject[,] tiles;
+    public List<GameObject> gamePieces;
+
+    public Material playerOneMaterial;
+    public Material playerTwoMaterial;
+    public Material boardOneMaterial;
+    public Material boardTwoMaterial;
 
     private bool isPlaying;
     private bool isPlayerTurn;
-    private List<GameObject> gamePieces;
-
-
+    
     // Singleton stuff
     private static GameController instance;
     public GameController(){}
@@ -30,14 +35,16 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gamePieces = new List<GameObject>();
         NewGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (isPlayerTurn && isPlaying)
+        {
+
+        }
     }
 
     private void NewGame()
@@ -54,56 +61,34 @@ public class GameController : MonoBehaviour
         }
         // initialize list
         gamePieces = new List<GameObject>();
+        tiles = new GameObject[8, 8];
 
-        // populate player tiles
-        // row 0, 1, 2
-        for(int i = 0; i < 3; i++)
+        // create game board and pieces
+        for(int i = 0; i < 8; i++)
         {
             for(int j = 0; j < 8; j++)
             {
+                // Instantiate tile
+                SpawnTilePiece(i, j);
+                Tile tile = tiles[i, j].GetComponent<Tile>();
+
                 // assign kings row
-                if(i == 0)
+                if (i == 0 || i == 7)
                 {
-                    tiles[i,j].isKingTile = true;
+                    tile.isKingTile = true;
                 }
+
                 // assign game piece
-                if((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
+                if(i != 3 && i != 4)
                 {
-                    SpawnGamePiece(i, j);
-                }
-                else
-                {
-                    tiles[i,j].gamePiece = null;
-                }
-            }
-        }
-        // refresh rows 3, 4
-        for(int i = 3; i < 5; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                tiles[i,j].gamePiece = null;
-            }
-        }
-        // populate computer tiles
-        // row 5, 6, 7
-        for (int i = 5; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                // assign kings row
-                if (i == 7)
-                {
-                    tiles[i,j].isKingTile = true;
-                }
-                // assign game piece
-                if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
-                {
-                    SpawnGamePiece(i, j);
-                }
-                else
-                {
-                    tiles[i,j].gamePiece = null;
+                    if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
+                    {
+                        SpawnGamePiece(i, j);
+                    }
+                    else
+                    {
+                        tile.gamePiece = null;
+                    }
                 }
             }
         }
@@ -111,12 +96,45 @@ public class GameController : MonoBehaviour
 
     private void NewTurn()
     {
-
+        
     }
 
     private void SpawnGamePiece(int row, int col)
     {
-        Tile tile = tiles[row,col];
-        GameObject piece = Instantiate(gamePiece, tile.gameObject.transform.position + Vector3.up, Quaternion.identity);
+        Vector3 pos = new Vector3(row - 3.5f, 0.25f, col - 3.5f);
+        GameObject piece = Instantiate(gamePiece, pos, Quaternion.identity);
+
+        // assign piece color
+        MeshRenderer pieceMat = piece.GetComponent<MeshRenderer>();
+        if (row == 0 || row == 1 || row == 2)
+        {
+            pieceMat.material = playerOneMaterial;
+        }
+        else
+        {
+            pieceMat.material = playerTwoMaterial;
+        }
+
+        gamePieces.Add(piece);
+    }
+
+    private void SpawnTilePiece(int row, int col)
+    {
+        Vector3 pos = new Vector3(row -3.5f, -1f, col -3.5f);
+        GameObject piece = Instantiate(tilePiece, pos + Vector3.up, Quaternion.identity);
+
+        // assign tile color
+        MeshRenderer pieceMat = piece.GetComponent<MeshRenderer>();
+        if ((row % 2 == 0 && col % 2 != 0) || (row % 2 != 0 && col % 2 == 0))
+        {
+            pieceMat.material = boardOneMaterial;
+        }
+        else
+        {
+            pieceMat.material = boardTwoMaterial;
+        }
+
+        // add tile to board
+        tiles[row, col] = piece;
     }
 }

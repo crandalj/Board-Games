@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public bool isPlayerPiece;
+    public bool isSelected;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        isSelected = false;
     }
 }

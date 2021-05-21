@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     public GameObject tilePiece;
     public GameObject[,] tiles;
     public List<GameObject> gamePieces;
+    // add playerPieces and aiPieces to replace gamepieces to keep better track of it
 
     public Material playerOneMaterial;
     public Material playerTwoMaterial;
@@ -16,7 +17,9 @@ public class GameController : MonoBehaviour
 
     private bool isPlaying;
     private bool isPlayerTurn;
-    
+    private Tile selectedDestination;  // pieces are associated with their tile so can use the tile to get the piece
+    private Tile selectedPiece;  // pieces are associated with their tile so can use the tile to get the piece
+
     // Singleton stuff
     private static GameController instance;
     public GameController(){}
@@ -43,13 +46,17 @@ public class GameController : MonoBehaviour
     {
         if (isPlayerTurn && isPlaying)
         {
-
+            // Player turn
+        } else if(!isPlayerTurn && isPlaying)
+        {
+            // AI turn
         }
     }
 
     private void NewGame()
     {
         isPlaying = false;
+        isPlayerTurn = false;
 
         // check gamePieces, if present then destroy them
         if(gamePieces.Count > 0)
@@ -92,11 +99,33 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+
+        NewTurn();
     }
 
     private void NewTurn()
     {
-        
+        isPlayerTurn = !isPlayerTurn;
+    }
+
+    public void CheckGameState()
+    {
+        // check victory / defeat
+
+        // victory = all AI pieces removed
+
+        // defeat = all player pieces removed
+    }
+
+    public void MovePiece(Tile jumpedTile = null)
+    {
+        // make selectedDestination's tile gameobject that of selectedPieces' and move it
+        selectedDestination.gamePiece = selectedPiece.gamePiece;
+        //TODO: trigger gamePiece's animation and update position
+
+        // check if jumpedTile is not null, if not remove the piece that was jumped
+
+        // make selectedPieces' tile gameobject null
     }
 
     private void SpawnGamePiece(int row, int col)

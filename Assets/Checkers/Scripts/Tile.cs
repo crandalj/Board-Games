@@ -6,5 +6,5 @@ public class Tile : MonoBehaviour
 {
     public GameObject gamePiece;
     public bool isKingTile;
-
+    public bool isSelectable;
 }

@@ -7,8 +7,8 @@ public class GameController : MonoBehaviour
     public GameObject gamePiece;
     public GameObject tilePiece;
     public GameObject[,] tiles;
-    public List<GameObject> gamePieces;
-    // add playerPieces and aiPieces to replace gamepieces to keep better track of it
+    public List<GameObject> playerPieces;
+    public List<GameObject> aiPieces;
 
     public Material playerOneMaterial;
     public Material playerTwoMaterial;
@@ -58,16 +58,9 @@ public class GameController : MonoBehaviour
         isPlaying = false;
         isPlayerTurn = false;
 
-        // check gamePieces, if present then destroy them
-        if(gamePieces.Count > 0)
-        {
-            foreach(GameObject item in gamePieces)
-            {
-                Destroy(item);
-            }
-        }
-        // initialize list
-        gamePieces = new List<GameObject>();
+        // initialize lists
+        aiPieces = new List<GameObject>();
+        playerPieces = new List<GameObject>();
         tiles = new GameObject[8, 8];
 
         // create game board and pieces
@@ -138,13 +131,13 @@ public class GameController : MonoBehaviour
         if (row == 0 || row == 1 || row == 2)
         {
             pieceMat.material = playerOneMaterial;
+            playerPieces.Add(piece);
         }
         else
         {
             pieceMat.material = playerTwoMaterial;
+            aiPieces.Add(piece);
         }
-
-        gamePieces.Add(piece);
     }
 
     private void SpawnTilePiece(int row, int col)
@@ -165,5 +158,25 @@ public class GameController : MonoBehaviour
 
         // add tile to board
         tiles[row, col] = piece;
+    }
+
+    void ClearOldPieces()
+    {
+        // check playerPieces, if present then destroy them
+        if (playerPieces.Count > 0)
+        {
+            foreach (GameObject item in playerPieces)
+            {
+                Destroy(item);
+            }
+        }
+        // check aiPieces, if present then destroy them
+        if (aiPieces.Count > 0)
+        {
+            foreach (GameObject item in aiPieces)
+            {
+                Destroy(item);
+            }
+        }
     }
 }
